@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">GetUpsideTest</string>
     <string name="title_activity_maps">Map</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="tab_text_map">Map</string>
+    <string name="tab_text_list">List</string>
 </resources>
