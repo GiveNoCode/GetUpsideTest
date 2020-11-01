@@ -1,6 +1,5 @@
 package com.givenocode.getupsidetest.ui.map
 
-import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,7 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.givenocode.getupsidetest.R
-import com.givenocode.getupsidetest.data.model.Coordinates
+import com.givenocode.getupsidetest.domain.model.Coordinates
 import com.givenocode.getupsidetest.ui.PlacesViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap

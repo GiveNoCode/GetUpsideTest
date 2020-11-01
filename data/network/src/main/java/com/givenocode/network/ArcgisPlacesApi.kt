@@ -1,23 +1,24 @@
-package com.givenocode.getupsidetest.data.arcgis
+package com.givenocode.network
 
 import com.esri.arcgisruntime.concurrent.ListenableFuture
 import com.esri.arcgisruntime.geometry.Point
 import com.esri.arcgisruntime.tasks.geocode.GeocodeParameters
 import com.esri.arcgisruntime.tasks.geocode.GeocodeResult
 import com.esri.arcgisruntime.tasks.geocode.LocatorTask
-import com.givenocode.getupsidetest.data.model.Coordinates
-import com.givenocode.getupsidetest.data.model.Place
+import com.givenocode.getupsidetest.domain.PlacesApi
+import com.givenocode.getupsidetest.domain.model.Coordinates
+import com.givenocode.getupsidetest.domain.model.Place
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
 
-class ArcgisPlacesApi {
+class ArcgisPlacesApi: PlacesApi {
 
     private val locator =
         LocatorTask("https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer")
 
 
-    suspend fun findPlaces(coordinates: Coordinates, maxResults: Int): List<Place> = withContext(IO) {
+    override suspend fun findPlaces(coordinates: Coordinates, maxResults: Int): List<Place> = withContext(IO) {
         val parameters = GeocodeParameters()
 
         parameters.preferredSearchLocation = Point(coordinates.latitude, coordinates.longitude)

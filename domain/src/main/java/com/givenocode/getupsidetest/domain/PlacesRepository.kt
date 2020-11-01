@@ -1,13 +1,11 @@
-package com.givenocode.getupsidetest.data
+package com.givenocode.getupsidetest.domain
 
-import com.givenocode.getupsidetest.data.arcgis.ArcgisPlacesApi
-import com.givenocode.getupsidetest.data.database.PlacesStorage
-import com.givenocode.getupsidetest.data.model.Coordinates
-import com.givenocode.getupsidetest.data.model.Place
+import com.givenocode.getupsidetest.domain.model.Coordinates
+import com.givenocode.getupsidetest.domain.model.Place
 import kotlin.math.abs
 
 class PlacesRepository constructor(
-    private val placesApi: ArcgisPlacesApi,
+    private val placesApi: PlacesApi,
     private val placesStorage: PlacesStorage
 ) {
 

@@ -1,9 +1,9 @@
-package com.givenocode.getupsidetest.data.database
+package com.givenocode.getupsidetest.storage
 
-import com.givenocode.getupsidetest.data.model.Coordinates
-import com.givenocode.getupsidetest.data.model.Place
+import com.givenocode.getupsidetest.domain.model.Coordinates
+import com.givenocode.getupsidetest.domain.model.Place
 
-class InMemoryStorage : PlacesStorage {
+class InMemoryStorage : com.givenocode.getupsidetest.domain.PlacesStorage {
 
     private var places: List<Place>? = null
     private var initialCoordinates: Coordinates? = null

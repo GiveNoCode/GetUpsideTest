@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.givenocode.getupsidetest.R
-import com.givenocode.getupsidetest.data.model.Coordinates
+import com.givenocode.getupsidetest.domain.model.Coordinates
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.location.FusedLocationProviderClient

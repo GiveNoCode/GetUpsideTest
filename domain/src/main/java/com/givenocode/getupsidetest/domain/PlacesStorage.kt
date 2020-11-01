@@ -1,7 +1,7 @@
-package com.givenocode.getupsidetest.data.database
+package com.givenocode.getupsidetest.domain
 
-import com.givenocode.getupsidetest.data.model.Coordinates
-import com.givenocode.getupsidetest.data.model.Place
+import com.givenocode.getupsidetest.domain.model.Coordinates
+import com.givenocode.getupsidetest.domain.model.Place
 
 interface PlacesStorage {
 

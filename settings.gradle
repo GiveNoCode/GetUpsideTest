@@ -1,3 +1,6 @@
+include ':data:storage'
+include ':data:network'
+include ':domain'
 include ':data'
 include ':app'
 rootProject.name = "GetUpsideTest"
