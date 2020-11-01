@@ -4,7 +4,6 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,7 +55,7 @@ class PlacesMapFragment : Fragment() {
 
 
                 var distance = Float.MAX_VALUE
-                    lastLocation?.let {
+                lastLocation?.let {
                     val results = FloatArray(1)
                     Location.distanceBetween(
                         it.latitude,
@@ -67,7 +66,6 @@ class PlacesMapFragment : Fragment() {
                     )
                     distance = results[0]
                 }
-                Log.d("--!!--", "$distance")
 
                 if (distance > MOVEMENT_TRESHOLD) {
                     lastLocation = target

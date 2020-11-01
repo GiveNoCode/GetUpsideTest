@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.givenocode.getupsidetest.R
 import com.givenocode.getupsidetest.ui.PlacesViewModel
+import kotlinx.android.synthetic.main.fragment_places_list.*
 
 class PlacesListFragment : Fragment() {
 
@@ -17,6 +18,8 @@ class PlacesListFragment : Fragment() {
 
     private lateinit var viewModel: PlacesViewModel
 
+    private val adapter = PlacesListAdapter()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -24,9 +27,20 @@ class PlacesListFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_places_list, container, false)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        recyclerView.adapter = adapter
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(PlacesViewModel::class.java)
+
+        viewModel.placesLiveData.observe(viewLifecycleOwner) { result ->
+            if (result is PlacesViewModel.PlacesResource.Success) {
+                adapter.setItems(result.places)
+            }
+        }
     }
 
 }
