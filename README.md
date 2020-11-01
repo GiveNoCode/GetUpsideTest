@@ -25,3 +25,14 @@ Before you run your application, you need a Google Maps API key.
     https://developers.google.com/maps/documentation/android/start#get-key
 
     Once you have your key (it starts with "AIza"), set it to apiKey property in local.properties file
+
+
+
+    ### Runtime permission handling
+
+    app uses experimental feature registerForActivityResult from androidx.activity:activity-ktx:1.2.0-alpha04
+
+    ### Device location
+
+    current implementation only gets lastLocation. it may not work in case if location was not requested by any app before. This may be fixed by going to google maps so that it requests location.
+

@@ -27,7 +27,6 @@ class PlacesListFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(PlacesViewModel::class.java)
-        // TODO: Use the ViewModel
     }
 
 }
