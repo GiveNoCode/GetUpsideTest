@@ -1,4 +1,4 @@
-package com.givenocode.getupsidetest.ui.main.list
+package com.givenocode.getupsidetest.ui.list
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.givenocode.getupsidetest.R
-import com.givenocode.getupsidetest.ui.main.PlacesViewModel
+import com.givenocode.getupsidetest.ui.PlacesViewModel
 
 class PlacesListFragment : Fragment() {
 
