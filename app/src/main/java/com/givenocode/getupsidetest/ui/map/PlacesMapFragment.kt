@@ -1,13 +1,17 @@
 package com.givenocode.getupsidetest.ui.map
 
+import android.location.Location
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.givenocode.getupsidetest.R
-import com.givenocode.getupsidetest.data.Coordinates
+import com.givenocode.getupsidetest.data.model.Coordinates
 import com.givenocode.getupsidetest.ui.PlacesViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -15,12 +19,16 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MarkerOptions
+
 
 class PlacesMapFragment : Fragment() {
 
     companion object {
 
         private const val CAMERA_ZOOM_LEVEL = 14f
+        private const val MOVEMENT_TRESHOLD = 50000
 
         fun newInstance() = PlacesMapFragment()
     }
@@ -28,8 +36,13 @@ class PlacesMapFragment : Fragment() {
 
     private lateinit var viewModel: PlacesViewModel
     private var googleMap: GoogleMap? = null
+    private var lastLocation: LatLng? = null
 
-    private val callback = OnMapReadyCallback { googleMap ->
+    private var enableCameraListener = true
+
+    private val handler = Handler(Looper.getMainLooper())
+
+    private val mapReadyCallback = OnMapReadyCallback { googleMap ->
         this.googleMap = googleMap
         if (this::viewModel.isInitialized) {
             viewModel.deviceLocationLiveData.value?.let { location ->
@@ -38,9 +51,31 @@ class PlacesMapFragment : Fragment() {
         }
 
         googleMap.setOnCameraIdleListener {
-            val target = googleMap.cameraPosition.target
-            viewModel.setSelectedLocation(Coordinates(target.latitude, target.longitude))
+            if (enableCameraListener) {
+                val target = googleMap.cameraPosition.target
+
+
+                var distance = Float.MAX_VALUE
+                    lastLocation?.let {
+                    val results = FloatArray(1)
+                    Location.distanceBetween(
+                        it.latitude,
+                        it.longitude,
+                        target.latitude,
+                        target.longitude,
+                        results
+                    )
+                    distance = results[0]
+                }
+                Log.d("--!!--", "$distance")
+
+                if (distance > MOVEMENT_TRESHOLD) {
+                    lastLocation = target
+                    viewModel.setSelectedLocation(Coordinates(target.latitude, target.longitude))
+                }
+            }
         }
+
     }
 
     override fun onCreateView(
@@ -54,7 +89,7 @@ class PlacesMapFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync(callback)
+        mapFragment?.getMapAsync(mapReadyCallback)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -63,6 +98,48 @@ class PlacesMapFragment : Fragment() {
 
         viewModel.deviceLocationLiveData.observe(viewLifecycleOwner) {
             updateMap(it)
+        }
+
+        viewModel.placesLiveData.observe(viewLifecycleOwner) { result ->
+            if (result is PlacesViewModel.PlacesResource.Success) {
+                googleMap?.clear()
+
+                val boundsBuilder = LatLngBounds.Builder()
+
+                result.places.forEach {
+                    val latLng = LatLng(it.coordinates.latitude, it.coordinates.longitude)
+                    googleMap?.addMarker(
+                        MarkerOptions()
+                            .position(latLng)
+                            .title(it.label)
+                    )
+
+                    boundsBuilder.include(latLng)
+                }
+                val bounds = boundsBuilder.build()
+
+                val cu = CameraUpdateFactory.newLatLngBounds(
+                    bounds, resources.getDimensionPixelOffset(
+                        R.dimen.map_padding
+                    )
+                )
+
+                enableCameraListener = false
+                googleMap?.animateCamera(cu, object : GoogleMap.CancelableCallback {
+                    override fun onFinish() {
+                        handler.postDelayed({
+                            enableCameraListener = true
+                        }, 500)
+                    }
+
+                    override fun onCancel() {
+                        handler.postDelayed({
+                            enableCameraListener = true
+                        }, 500)
+                    }
+
+                })
+            }
         }
     }
 

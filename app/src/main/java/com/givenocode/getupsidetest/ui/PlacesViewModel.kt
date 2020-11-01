@@ -3,9 +3,16 @@ package com.givenocode.getupsidetest.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.givenocode.getupsidetest.data.Coordinates
+import androidx.lifecycle.viewModelScope
+import com.givenocode.getupsidetest.data.PlacesRepository
+import com.givenocode.getupsidetest.data.arcgis.ArcgisPlacesApi
+import com.givenocode.getupsidetest.data.model.Coordinates
+import com.givenocode.getupsidetest.data.model.Place
+import kotlinx.coroutines.launch
 
 class PlacesViewModel : ViewModel() {
+
+    private val placesRepository = PlacesRepository(ArcgisPlacesApi())
 
     // don't expose mutable liveData out of ViewModel
     private val _deviceLocationLiveData = MutableLiveData<Coordinates>()
@@ -21,15 +28,19 @@ class PlacesViewModel : ViewModel() {
     }
 
     fun setSelectedLocation(coordinates: Coordinates) {
-        if (_placesLiveData.value == PlacesResource.Idle)
+        viewModelScope.launch {
             _placesLiveData.postValue(PlacesResource.Loading)
-        else
-            _placesLiveData.postValue(PlacesResource.Idle)
+
+            val data = placesRepository.findPlaces(coordinates.latitude, coordinates.longitude)
+            _placesLiveData.postValue(PlacesResource.Success(data))
+        }
+
     }
 
     sealed class PlacesResource {
         object Idle : PlacesResource()
         object Loading : PlacesResource()
+        class Success(val places: List<Place>) : PlacesResource()
     }
 
 }

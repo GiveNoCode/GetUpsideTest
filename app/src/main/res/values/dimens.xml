@@ -1,4 +1,5 @@
 <resources>
 
     <dimen name="appbar_padding">16dp</dimen>
+    <dimen name="map_padding">32dp</dimen>
 </resources>
