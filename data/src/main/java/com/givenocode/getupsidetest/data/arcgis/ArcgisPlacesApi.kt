@@ -17,10 +17,10 @@ class ArcgisPlacesApi {
         LocatorTask("https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer")
 
 
-    suspend fun findPlaces(latitude: Double, longitude: Double, maxResults: Int): List<Place> = withContext(IO) {
+    suspend fun findPlaces(coordinates: Coordinates, maxResults: Int): List<Place> = withContext(IO) {
         val parameters = GeocodeParameters()
 
-        parameters.preferredSearchLocation = Point(latitude, longitude)
+        parameters.preferredSearchLocation = Point(coordinates.latitude, coordinates.longitude)
         parameters.maxResults = maxResults
 
         val outputAttributes = parameters.resultAttributeNames
@@ -31,7 +31,6 @@ class ArcgisPlacesApi {
         val results: ListenableFuture<List<GeocodeResult>> =
             locator.geocodeAsync("Food", parameters)
 
-        @Suppress("BlockingMethodInNonBlockingContext")
         results.get().map {
             Place(
                 label = it.label,

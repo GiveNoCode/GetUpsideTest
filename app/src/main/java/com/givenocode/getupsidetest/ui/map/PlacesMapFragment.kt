@@ -27,7 +27,6 @@ class PlacesMapFragment : Fragment() {
     companion object {
 
         private const val CAMERA_ZOOM_LEVEL = 14f
-        private const val MOVEMENT_TRESHOLD = 50000
 
         fun newInstance() = PlacesMapFragment()
     }
@@ -35,7 +34,6 @@ class PlacesMapFragment : Fragment() {
 
     private lateinit var viewModel: PlacesViewModel
     private var googleMap: GoogleMap? = null
-    private var lastLocation: LatLng? = null
 
     private var enableCameraListener = true
 
@@ -52,25 +50,7 @@ class PlacesMapFragment : Fragment() {
         googleMap.setOnCameraIdleListener {
             if (enableCameraListener) {
                 val target = googleMap.cameraPosition.target
-
-
-                var distance = Float.MAX_VALUE
-                lastLocation?.let {
-                    val results = FloatArray(1)
-                    Location.distanceBetween(
-                        it.latitude,
-                        it.longitude,
-                        target.latitude,
-                        target.longitude,
-                        results
-                    )
-                    distance = results[0]
-                }
-
-                if (distance > MOVEMENT_TRESHOLD) {
-                    lastLocation = target
-                    viewModel.setSelectedLocation(Coordinates(target.latitude, target.longitude))
-                }
+                viewModel.setSelectedLocation(Coordinates(target.latitude, target.longitude))
             }
         }
 

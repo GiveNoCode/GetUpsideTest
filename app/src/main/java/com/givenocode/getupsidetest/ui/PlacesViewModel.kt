@@ -6,13 +6,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.givenocode.getupsidetest.data.PlacesRepository
 import com.givenocode.getupsidetest.data.arcgis.ArcgisPlacesApi
+import com.givenocode.getupsidetest.data.database.InMemoryStorage
 import com.givenocode.getupsidetest.data.model.Coordinates
 import com.givenocode.getupsidetest.data.model.Place
 import kotlinx.coroutines.launch
 
 class PlacesViewModel : ViewModel() {
 
-    private val placesRepository = PlacesRepository(ArcgisPlacesApi())
+    // TODO dependency injection
+    private val placesRepository = PlacesRepository(
+        ArcgisPlacesApi(),
+        InMemoryStorage()
+    )
 
     // don't expose mutable liveData out of ViewModel
     private val _deviceLocationLiveData = MutableLiveData<Coordinates>()
@@ -31,7 +36,7 @@ class PlacesViewModel : ViewModel() {
         viewModelScope.launch {
             _placesLiveData.postValue(PlacesResource.Loading)
 
-            val data = placesRepository.findPlaces(coordinates.latitude, coordinates.longitude)
+            val data = placesRepository.findPlaces(coordinates)
             _placesLiveData.postValue(PlacesResource.Success(data))
         }
 
