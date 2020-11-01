@@ -5,12 +5,14 @@ import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import android.widget.Toast
+import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager2.widget.ViewPager2
 import com.givenocode.getupsidetest.R
+import com.givenocode.getupsidetest.data.Coordinates
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -52,6 +54,20 @@ class MainActivity : AppCompatActivity() {
             }
         }.attach()
 
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                // disable viewpager swipe to allow full Map control
+                viewPager.isUserInputEnabled = position != 0
+            }
+        })
+
+        viewModel.placesLiveData.observe(this) {
+            progressBar.visibility = if (it is PlacesViewModel.PlacesResource.Loading) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+        }
     }
 
     override fun onStart() {
@@ -80,7 +96,7 @@ class MainActivity : AppCompatActivity() {
                     .addOnSuccessListener { location: Location? ->
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
-                            Toast.makeText(this, "$location", Toast.LENGTH_LONG).show()
+                            viewModel.setDeviceLocation(Coordinates(location.latitude, location.longitude))
                         } else {
                             Snackbar.make(
                                 coordinatorLayout,

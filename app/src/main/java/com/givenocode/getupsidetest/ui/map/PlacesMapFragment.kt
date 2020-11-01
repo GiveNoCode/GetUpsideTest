@@ -1,48 +1,46 @@
 package com.givenocode.getupsidetest.ui.map
 
-import android.Manifest
-import android.app.AlertDialog
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.givenocode.getupsidetest.R
-import com.givenocode.getupsidetest.ui.DisplayMode
+import com.givenocode.getupsidetest.data.Coordinates
 import com.givenocode.getupsidetest.ui.PlacesViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 
 class PlacesMapFragment : Fragment() {
 
     companion object {
+
+        private const val CAMERA_ZOOM_LEVEL = 14f
+
         fun newInstance() = PlacesMapFragment()
     }
 
 
     private lateinit var viewModel: PlacesViewModel
+    private var googleMap: GoogleMap? = null
 
     private val callback = OnMapReadyCallback { googleMap ->
-        /**
-         * Manipulates the map once available.
-         * This callback is triggered when the map is ready to be used.
-         * This is where we can add markers or lines, add listeners or move the camera.
-         * In this case, we just add a marker near Sydney, Australia.
-         * If Google Play services is not installed on the device, the user will be prompted to
-         * install it inside the SupportMapFragment. This method will only be triggered once the
-         * user has installed Google Play services and returned to the app.
-         */
-        val sydney = LatLng(-34.0, 151.0)
-        googleMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        this.googleMap = googleMap
+        if (this::viewModel.isInitialized) {
+            viewModel.deviceLocationLiveData.value?.let { location ->
+                updateMap(location)
+            }
+        }
+
+        googleMap.setOnCameraIdleListener {
+            val target = googleMap.cameraPosition.target
+            viewModel.setSelectedLocation(Coordinates(target.latitude, target.longitude))
+        }
     }
 
     override fun onCreateView(
@@ -62,6 +60,18 @@ class PlacesMapFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(PlacesViewModel::class.java)
+
+        viewModel.deviceLocationLiveData.observe(viewLifecycleOwner) {
+            updateMap(it)
+        }
     }
 
+    private fun updateMap(coordinates: Coordinates) {
+        val currentLatLng = LatLng(coordinates.latitude, coordinates.longitude)
+        val cameraPosition = CameraPosition.Builder()
+            .zoom(CAMERA_ZOOM_LEVEL)
+            .target(currentLatLng)
+            .build()
+        googleMap?.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+    }
 }
