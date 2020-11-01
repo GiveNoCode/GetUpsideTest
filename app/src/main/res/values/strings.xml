@@ -3,4 +3,5 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="tab_text_map">Map</string>
     <string name="tab_text_list">List</string>
+    <string name="location_permission_rationale">Please allow location permission to use the app</string>
 </resources>

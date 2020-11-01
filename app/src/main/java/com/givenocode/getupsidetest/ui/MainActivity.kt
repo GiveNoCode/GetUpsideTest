@@ -1,8 +1,14 @@
 package com.givenocode.getupsidetest.ui
 
+import android.Manifest
+import android.app.AlertDialog
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.givenocode.getupsidetest.R
@@ -28,31 +34,45 @@ class MainActivity : AppCompatActivity() {
             }
         }.attach()
 
-        viewPager.registerOnPageChangeCallback(object  : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                when(position) {
-                    0 -> viewModel.setDisplayMode(DisplayMode.Map)
-                    1 -> viewModel.setDisplayMode(DisplayMode.List)
-                    else -> throw IllegalArgumentException("position $position not supported")
-                }
-            }
-        })
-
         viewModel = ViewModelProvider(this).get(PlacesViewModel::class.java)
 
-        initSubscription()
     }
 
-    private fun initSubscription(){
-        viewModel.displayModeLiveData.observe(this) { displayMode ->
-            when(displayMode) {
-                DisplayMode.Map -> {
-                    viewPager.setCurrentItem(0, true)
-                }
-                DisplayMode.List -> {
-                    viewPager.setCurrentItem(1, true)
-                }
+    override fun onStart() {
+        super.onStart()
+        checkPermission()
+    }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                requestLocation()
             }
         }
+
+    private fun checkPermission() {
+        when {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                requestLocation()
+            }
+            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION) -> {
+                AlertDialog.Builder(this)
+                    .setMessage(R.string.location_permission_rationale)
+                    .setPositiveButton(android.R.string.ok) { _, _ -> requestPermissionLauncher.launch(
+                        Manifest.permission.ACCESS_COARSE_LOCATION) }
+                    .setNegativeButton(android.R.string.cancel) { _, _ -> }
+                    .show()
+            }
+            else -> {
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
+            }
+        }
+    }
+
+    private fun requestLocation() {
+
     }
 }
