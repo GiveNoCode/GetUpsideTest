@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.givenocode.getupsidetest.App
 import com.givenocode.getupsidetest.domain.PlacesRepository
 import com.givenocode.network.ArcgisPlacesApi
-import com.givenocode.getupsidetest.storage.InMemoryStorage
 import com.givenocode.getupsidetest.domain.model.Coordinates
 import com.givenocode.getupsidetest.domain.model.Place
 import kotlinx.coroutines.launch
@@ -16,7 +16,7 @@ class PlacesViewModel : ViewModel() {
     // TODO dependency injection
     private val placesRepository = PlacesRepository(
         ArcgisPlacesApi(),
-        com.givenocode.getupsidetest.storage.InMemoryStorage()
+        App.realmPlaceStorage
     )
 
     // don't expose mutable liveData out of ViewModel

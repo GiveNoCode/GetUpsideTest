@@ -84,7 +84,7 @@ class PlacesMapFragment : Fragment() {
                 val boundsBuilder = LatLngBounds.Builder()
 
                 result.places.forEach {
-                    val latLng = LatLng(it.coordinates.latitude, it.coordinates.longitude)
+                    val latLng = LatLng(it.latitude, it.longitude)
                     googleMap?.addMarker(
                         MarkerOptions()
                             .position(latLng)

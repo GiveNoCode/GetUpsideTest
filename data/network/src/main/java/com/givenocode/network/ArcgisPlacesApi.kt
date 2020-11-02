@@ -35,7 +35,8 @@ class ArcgisPlacesApi: PlacesApi {
         results.get().map {
             Place(
                 label = it.label,
-                coordinates = Coordinates(it.displayLocation.x, it.displayLocation.y))
+                latitude =  it.displayLocation.x,
+                longitude = it.displayLocation.y)
         }
     }
 }
