@@ -1,6 +1,6 @@
 package com.givenocode.getupsidetest.domain.model
 
-data class Coordinates(
+data class SearchLocation(
     val latitude: Double,
     val longitude: Double
 )

@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.givenocode.getupsidetest.R
-import com.givenocode.getupsidetest.domain.model.Coordinates
+import com.givenocode.getupsidetest.domain.model.SearchLocation
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity() {
                     .addOnSuccessListener { location: Location? ->
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
-                            viewModel.setDeviceLocation(Coordinates(location.latitude, location.longitude))
+                            viewModel.setDeviceLocation(SearchLocation(location.latitude, location.longitude))
                         } else {
                             Snackbar.make(
                                 coordinatorLayout,

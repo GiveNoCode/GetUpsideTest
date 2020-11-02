@@ -1,15 +1,15 @@
 package com.givenocode.getupsidetest.storage.mapper
 
-import com.givenocode.getupsidetest.domain.model.Coordinates
-import com.givenocode.getupsidetest.storage.model.RealmCoordinates
+import com.givenocode.getupsidetest.domain.model.SearchLocation
+import com.givenocode.getupsidetest.storage.model.RealmSearchLocation
 
-internal fun Coordinates.toRealmObject() : RealmCoordinates {
-    return RealmCoordinates().also {
+internal fun SearchLocation.toRealmObject() : RealmSearchLocation {
+    return RealmSearchLocation().also {
         it.latitude = latitude
         it.longitude = longitude
     }
 }
 
-internal fun RealmCoordinates.toDomainObject(): Coordinates {
-    return Coordinates(latitude, longitude)
+internal fun RealmSearchLocation.toDomainObject(): SearchLocation {
+    return SearchLocation(latitude, longitude)
 }

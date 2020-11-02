@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.givenocode.getupsidetest.R
-import com.givenocode.getupsidetest.domain.model.Coordinates
+import com.givenocode.getupsidetest.domain.model.SearchLocation
 import com.givenocode.getupsidetest.ui.PlacesViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -41,7 +41,7 @@ class PlacesMapFragment : Fragment() {
     private val mapReadyCallback = OnMapReadyCallback { googleMap ->
         this.googleMap = googleMap
         if (this::viewModel.isInitialized) {
-            viewModel.deviceLocationLiveData.value?.let { location ->
+            viewModel.searchLocationLiveData.value?.let { location ->
                 updateMap(location)
             }
         }
@@ -49,7 +49,7 @@ class PlacesMapFragment : Fragment() {
         googleMap.setOnCameraIdleListener {
             if (enableCameraListener) {
                 val target = googleMap.cameraPosition.target
-                viewModel.setSelectedLocation(Coordinates(target.latitude, target.longitude))
+                viewModel.setSelectedLocation(SearchLocation(target.latitude, target.longitude))
             }
         }
 
@@ -73,7 +73,7 @@ class PlacesMapFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(PlacesViewModel::class.java)
 
-        viewModel.deviceLocationLiveData.observe(viewLifecycleOwner) {
+        viewModel.searchLocationLiveData.observe(viewLifecycleOwner) {
             updateMap(it)
         }
 
@@ -120,8 +120,8 @@ class PlacesMapFragment : Fragment() {
         }
     }
 
-    private fun updateMap(coordinates: Coordinates) {
-        val currentLatLng = LatLng(coordinates.latitude, coordinates.longitude)
+    private fun updateMap(searchLocation: SearchLocation) {
+        val currentLatLng = LatLng(searchLocation.latitude, searchLocation.longitude)
         val cameraPosition = CameraPosition.Builder()
             .zoom(CAMERA_ZOOM_LEVEL)
             .target(currentLatLng)

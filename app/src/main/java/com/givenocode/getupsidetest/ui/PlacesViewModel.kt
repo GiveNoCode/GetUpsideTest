@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.givenocode.getupsidetest.App
 import com.givenocode.getupsidetest.domain.PlacesRepository
 import com.givenocode.network.ArcgisPlacesApi
-import com.givenocode.getupsidetest.domain.model.Coordinates
+import com.givenocode.getupsidetest.domain.model.SearchLocation
 import com.givenocode.getupsidetest.domain.model.Place
 import kotlinx.coroutines.launch
 
@@ -20,23 +20,23 @@ class PlacesViewModel : ViewModel() {
     )
 
     // don't expose mutable liveData out of ViewModel
-    private val _deviceLocationLiveData = MutableLiveData<Coordinates>()
-    val deviceLocationLiveData: LiveData<Coordinates> = _deviceLocationLiveData
+    private val _deviceLocationLiveData = MutableLiveData<SearchLocation>()
+    val searchLocationLiveData: LiveData<SearchLocation> = _deviceLocationLiveData
 
     private val _placesLiveData = MutableLiveData<PlacesResource>().apply {
         postValue(PlacesResource.Idle)
     }
     val placesLiveData: LiveData<PlacesResource> = _placesLiveData
 
-    fun setDeviceLocation(coordinates: Coordinates) {
-        _deviceLocationLiveData.postValue(coordinates)
+    fun setDeviceLocation(searchLocation: SearchLocation) {
+        _deviceLocationLiveData.postValue(searchLocation)
     }
 
-    fun setSelectedLocation(coordinates: Coordinates) {
+    fun setSelectedLocation(searchLocation: SearchLocation) {
         viewModelScope.launch {
             _placesLiveData.postValue(PlacesResource.Loading)
 
-            val data = placesRepository.findPlaces(coordinates)
+            val data = placesRepository.findPlaces(searchLocation)
             _placesLiveData.postValue(PlacesResource.Success(data))
         }
 
