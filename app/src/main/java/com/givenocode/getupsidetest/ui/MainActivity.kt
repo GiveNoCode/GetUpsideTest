@@ -28,6 +28,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
+    private var placeDetailsDialog: AlertDialog? = null
+
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
@@ -66,6 +68,18 @@ class MainActivity : AppCompatActivity() {
                 View.VISIBLE
             } else {
                 View.GONE
+            }
+        }
+
+        viewModel.selectedPlaceLiveData.observe(this) {place ->
+            placeDetailsDialog?.dismiss()
+            if (place != null) {
+                placeDetailsDialog = AlertDialog.Builder(this)
+                    .setTitle(place.label)
+                    .setMessage("${place.address}\n${place.phone}")
+                    .setPositiveButton(android.R.string.ok) { _ , _ -> }
+                    .setOnDismissListener { viewModel.clearSelectedPlace() }
+                    .show()
             }
         }
     }

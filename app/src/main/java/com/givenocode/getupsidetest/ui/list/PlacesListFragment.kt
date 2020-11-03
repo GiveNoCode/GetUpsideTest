@@ -18,7 +18,9 @@ class PlacesListFragment : Fragment() {
 
     private lateinit var viewModel: PlacesViewModel
 
-    private val adapter = PlacesListAdapter()
+    private val adapter = PlacesListAdapter {
+        viewModel.setSelectedPlace(it)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

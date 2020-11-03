@@ -23,6 +23,9 @@ class PlacesViewModel : ViewModel() {
     private val _deviceLocationLiveData = MutableLiveData<SearchLocation>()
     val searchLocationLiveData: LiveData<SearchLocation> = _deviceLocationLiveData
 
+    private val _selectedPlaceLiveData = MutableLiveData<Place?>()
+    val selectedPlaceLiveData: LiveData<Place?> = _selectedPlaceLiveData
+
     private val _placesLiveData = MutableLiveData<PlacesResource>().apply {
         postValue(PlacesResource.Idle)
     }
@@ -39,7 +42,14 @@ class PlacesViewModel : ViewModel() {
             val data = placesRepository.findPlaces(searchLocation)
             _placesLiveData.postValue(PlacesResource.Success(data))
         }
+    }
 
+    fun setSelectedPlace(place: Place) {
+        _selectedPlaceLiveData.postValue(place)
+    }
+
+    fun clearSelectedPlace(){
+        _selectedPlaceLiveData.postValue(null)
     }
 
     sealed class PlacesResource {

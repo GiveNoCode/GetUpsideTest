@@ -35,9 +35,7 @@ class RealmPlacesStorage : PlacesStorage {
     }
 
     override suspend fun getSearchLocation(): SearchLocation? = withContext(Dispatchers.IO){
-        realm.where(RealmSearchLocation::class.java).findAll().firstOrNull()?.let {
-            it.toDomainObject()
-        }
+        realm.where(RealmSearchLocation::class.java).findAll().firstOrNull()?.toDomainObject()
     }
 
     private fun executeTransaction(action: Realm.() -> Unit) {

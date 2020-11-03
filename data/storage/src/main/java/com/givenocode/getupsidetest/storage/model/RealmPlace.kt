@@ -6,6 +6,10 @@ internal open class RealmPlace : RealmObject() {
 
     var label = ""
 
+    var address: String = ""
+
+    var phone: String = ""
+
     var latitude = 0.0
 
     var longitude = 0.0

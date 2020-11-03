@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.givenocode.getupsidetest.R
+import com.givenocode.getupsidetest.domain.model.Place
 import com.givenocode.getupsidetest.domain.model.SearchLocation
 import com.givenocode.getupsidetest.ui.PlacesViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -53,6 +54,15 @@ class PlacesMapFragment : Fragment() {
             }
         }
 
+        googleMap.setOnMarkerClickListener { marker ->
+            val place = (marker.tag as? Place)
+            if (place == null) {
+                false
+            } else {
+                viewModel.setSelectedPlace(place)
+                true
+            }
+        }
     }
 
     override fun onCreateView(
@@ -83,13 +93,11 @@ class PlacesMapFragment : Fragment() {
 
                 val boundsBuilder = LatLngBounds.Builder()
 
-                result.places.forEach {
-                    val latLng = LatLng(it.latitude, it.longitude)
-                    googleMap?.addMarker(
-                        MarkerOptions()
-                            .position(latLng)
-                            .title(it.label)
-                    )
+                result.places.forEach {place ->
+                    val latLng = LatLng(place.latitude, place.longitude)
+                    googleMap?.addMarker(MarkerOptions().position(latLng))?.apply {
+                        tag = place
+                    }
 
                     boundsBuilder.include(latLng)
                 }

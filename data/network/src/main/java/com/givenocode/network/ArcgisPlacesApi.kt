@@ -10,6 +10,8 @@ import com.givenocode.getupsidetest.domain.model.SearchLocation
 import com.givenocode.getupsidetest.domain.model.Place
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
+import java.lang.Exception
+import java.util.*
 
 
 class ArcgisPlacesApi: PlacesApi {
@@ -21,22 +23,33 @@ class ArcgisPlacesApi: PlacesApi {
     override suspend fun findPlaces(searchLocation: SearchLocation, maxResults: Int): List<Place> = withContext(IO) {
         val parameters = GeocodeParameters()
 
-        parameters.preferredSearchLocation = Point(searchLocation.latitude, searchLocation.longitude)
         parameters.maxResults = maxResults
+        parameters.preferredSearchLocation = Point(searchLocation.latitude, searchLocation.longitude)
+        parameters.outputLanguageCode = Locale.getDefault().language
+        parameters.categories.add("Food")
 
-        val outputAttributes = parameters.resultAttributeNames
-        outputAttributes.add("*")
+        parameters.resultAttributeNames.add("Place_addr")
+        parameters.resultAttributeNames.add("Phone")
 
         // Execute the search and add the places to the graphics overlay.
         // Execute the search and add the places to the graphics overlay.
         val results: ListenableFuture<List<GeocodeResult>> =
-            locator.geocodeAsync("Food", parameters)
+            locator.geocodeAsync("", parameters)
 
-        results.get().map {
-            Place(
-                label = it.label,
-                latitude =  it.displayLocation.x,
-                longitude = it.displayLocation.y)
+        try {
+            results.get().map {
+                Place(
+                    label = it.label,
+                    address = it.attributes["Place_addr"]?.toString() ?: "",
+                    phone = it.attributes["Phone"]?.toString() ?: "",
+                    latitude = it.displayLocation.x,
+                    longitude = it.displayLocation.y,
+
+                )
+            }
+        } catch (e: Exception) {
+            // todo handle exception
+            emptyList()
         }
     }
 }

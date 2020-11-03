@@ -8,7 +8,9 @@ import com.givenocode.getupsidetest.R
 import com.givenocode.getupsidetest.domain.model.Place
 import kotlinx.android.synthetic.main.list_item_place.view.*
 
-class PlacesListAdapter : RecyclerView.Adapter<PlacesListAdapter.Holder>() {
+class PlacesListAdapter constructor(
+    val itemClickListener: (Place) -> Unit
+) : RecyclerView.Adapter<PlacesListAdapter.Holder>() {
 
     private val items = mutableListOf<Place>()
 
@@ -31,10 +33,13 @@ class PlacesListAdapter : RecyclerView.Adapter<PlacesListAdapter.Holder>() {
 
     override fun getItemCount() = items.size
 
-    class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(place: Place) {
             itemView.labelTextView.text = place.label
+            itemView.setOnClickListener {
+                itemClickListener(place)
+            }
         }
     }
 }

@@ -11,7 +11,7 @@ class PlacesRepository constructor(
 
     companion object {
         private const val MAX_RESULTS = 20
-        private const val LOCATION_TRESHOLD = 0.1
+        private const val LOCATION_THRESHOLD = 0.1
     }
 
     suspend fun findPlaces(searchLocation: SearchLocation): List<Place> {
@@ -20,8 +20,8 @@ class PlacesRepository constructor(
         val savedPlaces = placesStorage.getPlaces()
         if (savedCoordinates != null
             && savedPlaces != null
-            && abs(savedCoordinates.latitude - searchLocation.latitude) < LOCATION_TRESHOLD
-            && abs(savedCoordinates.latitude - searchLocation.latitude) < LOCATION_TRESHOLD
+            && abs(savedCoordinates.latitude - searchLocation.latitude) < LOCATION_THRESHOLD
+            && abs(savedCoordinates.latitude - searchLocation.latitude) < LOCATION_THRESHOLD
         ) {
             return savedPlaces
         }
