@@ -27,7 +27,7 @@ Alternatively, follow the directions (here)[https://developers.google.com/maps/d
 
 
 Once you have your key (it starts with "AIza"), set it to apiKey property in local.properties file
-
+![maps key location](maps_key_location.png "key location")
 
 
 ### Runtime permission handling
