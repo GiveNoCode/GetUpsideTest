@@ -5,6 +5,10 @@ Android application which will show nearby food places as pins on the Google Map
 Test task for Android Developer position at GetUpside
 
 
+### General Project structure:
+![project diagram](diagram.png "diagram")
+
+
 ### Google maps key
 
 Before you run your application, you need a Google Maps API key.
